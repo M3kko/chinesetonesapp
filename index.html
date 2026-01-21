@@ -7,65 +7,141 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <div class="stats">
-            <div class="stat">
-                <div class="stat-value" id="correct-count">0</div>
-                <div class="stat-label">Correct</div>
+    <!-- Streak Toast -->
+    <div class="streak-toast" id="streak-toast">
+        <span class="streak-count" id="streak-toast-count">5</span><span class="streak-fire"></span>
+        <div class="streak-message" id="streak-toast-message">Nice streak!</div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settings-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Settings</h3>
+                <button class="modal-close" id="settings-close">&times;</button>
             </div>
-            <div class="stat">
-                <div class="stat-value" id="streak-count">0</div>
-                <div class="stat-label">Streak</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value incorrect" id="incorrect-count">0</div>
-                <div class="stat-label">Incorrect</div>
+            <div class="modal-body">
+                <button class="danger-btn" id="reset-btn">Reset All Progress</button>
+                <p class="danger-hint">This will clear your stats and struggling tones</p>
             </div>
         </div>
+    </div>
 
-        <div class="review-banner" id="review-banner">
-            Reviewing Difficult Tones
+    <!-- Sandbox Modal -->
+    <div class="modal-overlay" id="sandbox-modal">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <h3>Explore All Tones</h3>
+                <button class="modal-close" id="sandbox-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="search-input" id="sandbox-search" placeholder="Search pinyin...">
+                <div class="sandbox-grid" id="sandbox-grid"></div>
+            </div>
         </div>
+    </div>
 
-        <div class="flashcard">
-            <div class="pinyin-display" id="pinyin-display">Listen & Choose</div>
-
-            <button class="speaker-btn" id="speaker-btn" aria-label="Play audio">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <button class="sidebar-btn" id="practice-mode-btn" title="Practice Mode">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
                 </svg>
             </button>
-
-            <p class="hint-text">Tap to play the sound</p>
-        </div>
-
-        <div class="tone-buttons" id="tone-buttons">
-            <button class="tone-btn" data-tone="1">
-                <span class="tone-number">1</span>
-                <span class="tone-mark">ā</span>
-                <span class="tone-name">High</span>
+            <button class="sidebar-btn" id="mistakes-btn" title="Practice Mistakes">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
             </button>
-            <button class="tone-btn" data-tone="2">
-                <span class="tone-number">2</span>
-                <span class="tone-mark">á</span>
-                <span class="tone-name">Rising</span>
+            <button class="sidebar-btn" id="sandbox-btn" title="Explore All Tones">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"/>
+                    <rect x="14" y="3" width="7" height="7"/>
+                    <rect x="14" y="14" width="7" height="7"/>
+                    <rect x="3" y="14" width="7" height="7"/>
+                </svg>
             </button>
-            <button class="tone-btn" data-tone="3">
-                <span class="tone-number">3</span>
-                <span class="tone-mark">ǎ</span>
-                <span class="tone-name">Dipping</span>
-            </button>
-            <button class="tone-btn" data-tone="4">
-                <span class="tone-number">4</span>
-                <span class="tone-mark">à</span>
-                <span class="tone-name">Falling</span>
+            <div class="sidebar-spacer"></div>
+            <button class="sidebar-btn" id="settings-btn" title="Settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
             </button>
         </div>
 
-        <button class="next-btn" id="next-btn">Next Card →</button>
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="container">
+                <!-- Mode indicator -->
+                <div class="mode-banner" id="mode-banner">
+                    <span id="mode-text">Practice Mode</span>
+                    <button class="mode-exit" id="mode-exit">&times;</button>
+                </div>
 
-        <div class="struggling-indicator" id="struggling-indicator">
-            <span id="struggling-count">0</span> tones need more practice
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-value correct-val" id="correct-count">0</div>
+                        <div class="stat-label">Correct</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="streak-count">0</div>
+                        <div class="stat-label">Streak</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value incorrect" id="incorrect-count">0</div>
+                        <div class="stat-label">Incorrect</div>
+                    </div>
+                </div>
+
+                <div class="review-banner" id="review-banner">
+                    Reviewing Difficult Tones
+                </div>
+
+                <div class="flashcard">
+                    <div class="pinyin-display" id="pinyin-display">Listen & Choose</div>
+
+                    <button class="speaker-btn" id="speaker-btn" aria-label="Play audio">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                        </svg>
+                    </button>
+
+                    <p class="hint-text">Tap to play the sound</p>
+                </div>
+
+                <div class="tone-buttons" id="tone-buttons">
+                    <button class="tone-btn" data-tone="1">
+                        <span class="tone-number">1</span>
+                        <span class="tone-mark">ā</span>
+                        <span class="tone-name">High</span>
+                    </button>
+                    <button class="tone-btn" data-tone="2">
+                        <span class="tone-number">2</span>
+                        <span class="tone-mark">á</span>
+                        <span class="tone-name">Rising</span>
+                    </button>
+                    <button class="tone-btn" data-tone="3">
+                        <span class="tone-number">3</span>
+                        <span class="tone-mark">ǎ</span>
+                        <span class="tone-name">Dipping</span>
+                    </button>
+                    <button class="tone-btn" data-tone="4">
+                        <span class="tone-number">4</span>
+                        <span class="tone-mark">à</span>
+                        <span class="tone-name">Falling</span>
+                    </button>
+                </div>
+
+                <button class="next-btn" id="next-btn">Next Card</button>
+
+                <div class="struggling-indicator" id="struggling-indicator">
+                    <span id="struggling-count">0</span> tones need more practice
+                </div>
+            </div>
         </div>
     </div>
 
