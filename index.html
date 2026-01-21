@@ -35,9 +35,37 @@
                 <button class="modal-close" id="sandbox-close">&times;</button>
             </div>
             <div class="modal-body">
-                <input type="text" class="search-input" id="sandbox-search" placeholder="Search pinyin...">
+                <div class="sandbox-controls">
+                    <input type="text" class="search-input" id="sandbox-search" placeholder="Search pinyin...">
+                    <div class="view-toggle">
+                        <button class="view-toggle-btn active" id="list-view-btn" title="List View">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+                                <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+                            </svg>
+                        </button>
+                        <button class="view-toggle-btn" id="table-view-btn" title="Table View">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                                <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
                 <div class="sandbox-grid" id="sandbox-grid"></div>
+                <div class="sandbox-table" id="sandbox-table">
+                    <div class="pinyin-table" id="pinyin-table"></div>
+                </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Tone Picker Popup -->
+    <div class="tone-picker-overlay" id="tone-picker-overlay">
+        <div class="tone-picker">
+            <div class="tone-picker-title" id="tone-picker-title">ma</div>
+            <div class="tone-picker-subtitle">Select a tone to play</div>
+            <div class="tone-picker-buttons" id="tone-picker-buttons"></div>
         </div>
     </div>
 
