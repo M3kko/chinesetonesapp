@@ -177,6 +177,48 @@ const streakCountEl = document.getElementById('streak-count');
 const reviewBanner = document.getElementById('review-banner');
 const strugglingIndicator = document.getElementById('struggling-indicator');
 const strugglingCountEl = document.getElementById('struggling-count');
+const streakToast = document.getElementById('streak-toast');
+const streakToastCount = document.getElementById('streak-toast-count');
+const streakToastMessage = document.getElementById('streak-toast-message');
+
+// Streak milestones and messages
+const STREAK_MESSAGES = {
+    3: "Good start!",
+    5: "Nice streak!",
+    10: "You're on fire!",
+    15: "Unstoppable!",
+    20: "Tone master!",
+    25: "Incredible!",
+    30: "Legendary!",
+    50: "Absolutely insane!",
+    75: "Are you even human?!",
+    100: "Tone god achieved!"
+};
+
+let toastTimeout = null;
+
+function showStreakToast(count) {
+    if (!STREAK_MESSAGES[count]) return;
+
+    // Clear any existing timeout
+    if (toastTimeout) {
+        clearTimeout(toastTimeout);
+        streakToast.classList.remove('visible');
+    }
+
+    streakToastCount.textContent = count;
+    streakToastMessage.textContent = STREAK_MESSAGES[count];
+
+    // Small delay to allow CSS transition reset
+    setTimeout(() => {
+        streakToast.classList.add('visible');
+    }, 50);
+
+    // Hide after 2 seconds
+    toastTimeout = setTimeout(() => {
+        streakToast.classList.remove('visible');
+    }, 2000);
+}
 
 // Load saved data
 function loadProgress() {
@@ -280,6 +322,8 @@ function handleToneSelect(selectedTone) {
     if (isCorrect) {
         correctCount++;
         streak++;
+        // Show streak toast if milestone reached
+        showStreakToast(streak);
         // Reduce struggling count on correct answer
         if (strugglingTones[key]) {
             strugglingTones[key]--;
