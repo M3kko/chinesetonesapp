@@ -123,11 +123,7 @@ function addToneMark(pinyin, tone) {
         result = result.replace('uu', 'ü');
     }
 
-    // Rules for tone mark placement:
-    // 1. If there's an 'a' or 'e', it gets the mark
-    // 2. If there's 'ou', the 'o' gets the mark
-    // 3. Otherwise, the last vowel gets the mark
-
+    // Rules for tone mark placement
     if (result.includes('a')) {
         return result.replace('a', TONE_MARKS['a'][toneIndex]);
     }
@@ -161,6 +157,7 @@ let incorrectCount = 0;
 let streak = 0;
 let answered = false;
 let audio = null;
+let practiceMode = 'all'; // 'all' or 'mistakes'
 
 // Spaced repetition tracking
 let strugglingTones = {}; // { "ba1": wrongCount, ... }
@@ -181,6 +178,25 @@ const streakToast = document.getElementById('streak-toast');
 const streakToastCount = document.getElementById('streak-toast-count');
 const streakToastMessage = document.getElementById('streak-toast-message');
 
+// Modal elements
+const settingsModal = document.getElementById('settings-modal');
+const settingsBtn = document.getElementById('settings-btn');
+const settingsClose = document.getElementById('settings-close');
+const resetBtn = document.getElementById('reset-btn');
+
+const sandboxModal = document.getElementById('sandbox-modal');
+const sandboxBtn = document.getElementById('sandbox-btn');
+const sandboxClose = document.getElementById('sandbox-close');
+const sandboxSearch = document.getElementById('sandbox-search');
+const sandboxGrid = document.getElementById('sandbox-grid');
+
+// Mode elements
+const practiceModeBtn = document.getElementById('practice-mode-btn');
+const mistakesBtn = document.getElementById('mistakes-btn');
+const modeBanner = document.getElementById('mode-banner');
+const modeText = document.getElementById('mode-text');
+const modeExit = document.getElementById('mode-exit');
+
 // Streak milestones and messages
 const STREAK_MESSAGES = {
     3: "Good start!",
@@ -200,7 +216,6 @@ let toastTimeout = null;
 function showStreakToast(count) {
     if (!STREAK_MESSAGES[count]) return;
 
-    // Clear any existing timeout
     if (toastTimeout) {
         clearTimeout(toastTimeout);
         streakToast.classList.remove('visible');
@@ -209,12 +224,10 @@ function showStreakToast(count) {
     streakToastCount.textContent = count;
     streakToastMessage.textContent = STREAK_MESSAGES[count];
 
-    // Small delay to allow CSS transition reset
     setTimeout(() => {
         streakToast.classList.add('visible');
     }, 50);
 
-    // Hide after 2 seconds
     toastTimeout = setTimeout(() => {
         streakToast.classList.remove('visible');
     }, 2000);
@@ -242,11 +255,39 @@ function saveProgress() {
     }));
 }
 
-// Get next card (prioritize struggling tones)
-function getNextCard() {
-    const strugglingKeys = Object.keys(strugglingTones).filter(k => strugglingTones[k] >= 2);
+// Reset progress
+function resetProgress() {
+    correctCount = 0;
+    incorrectCount = 0;
+    streak = 0;
+    strugglingTones = {};
+    localStorage.removeItem('chineseToneProgress');
+    updateStats();
+    updateStrugglingIndicator();
+    loadNewCard();
+}
 
-    // 40% chance to review struggling tones if there are any
+// Get struggling keys
+function getStrugglingKeys() {
+    return Object.keys(strugglingTones).filter(k => strugglingTones[k] >= 1);
+}
+
+// Get next card
+function getNextCard() {
+    const strugglingKeys = getStrugglingKeys();
+
+    // If in mistakes mode, only show struggling tones
+    if (practiceMode === 'mistakes') {
+        if (strugglingKeys.length === 0) {
+            return null; // No mistakes to practice
+        }
+        const key = strugglingKeys[Math.floor(Math.random() * strugglingKeys.length)];
+        const tone = parseInt(key.slice(-1));
+        const pinyin = key.slice(0, -1);
+        return { pinyin, tone };
+    }
+
+    // Normal mode: 40% chance to review struggling tones if there are any
     if (strugglingKeys.length > 0 && Math.random() < 0.4) {
         reviewMode = true;
         const key = strugglingKeys[Math.floor(Math.random() * strugglingKeys.length)];
@@ -256,7 +297,6 @@ function getNextCard() {
     }
 
     reviewMode = false;
-    // Pick from validated combinations
     const combo = VALID_COMBOS[Math.floor(Math.random() * VALID_COMBOS.length)];
     return { pinyin: combo.pinyin, tone: combo.tone };
 }
@@ -265,6 +305,15 @@ function getNextCard() {
 function loadNewCard() {
     answered = false;
     const card = getNextCard();
+
+    if (!card) {
+        // No cards available (mistakes mode with no mistakes)
+        pinyinDisplay.textContent = 'No mistakes to practice!';
+        pinyinDisplay.classList.add('revealed');
+        toneButtons.forEach(btn => btn.disabled = true);
+        return;
+    }
+
     currentPinyin = card.pinyin;
     currentTone = card.tone;
 
@@ -275,23 +324,20 @@ function loadNewCard() {
         const tone = parseInt(btn.dataset.tone);
         btn.classList.remove('correct', 'incorrect');
         btn.disabled = false;
-        // Update the tone mark to show current pinyin with this tone
         const toneMarkEl = btn.querySelector('.tone-mark');
         toneMarkEl.textContent = addToneMark(currentPinyin, tone);
     });
     nextBtn.classList.remove('visible');
-    reviewBanner.classList.toggle('visible', reviewMode);
+    reviewBanner.classList.toggle('visible', reviewMode && practiceMode !== 'mistakes');
 
-    // Preload audio and wait for it to load
+    // Preload audio
     audio = new Audio(`${AUDIO_BASE_URL}${currentPinyin}${currentTone}.mp3`);
     audio.preload = 'auto';
 
-    // Auto-play once loaded
     audio.addEventListener('canplaythrough', () => {
         if (!answered) playAudio();
     }, { once: true });
 
-    // Handle load errors
     audio.addEventListener('error', () => {
         console.log('Audio failed to load:', currentPinyin + currentTone);
     }, { once: true });
@@ -303,7 +349,6 @@ function playAudio() {
         audio.currentTime = 0;
         audio.play().catch(e => console.log('Audio play failed:', e));
     } else if (audio) {
-        // If not ready, wait for it
         audio.addEventListener('canplaythrough', () => {
             audio.play().catch(e => console.log('Audio play failed:', e));
         }, { once: true });
@@ -318,13 +363,10 @@ function handleToneSelect(selectedTone) {
     const key = `${currentPinyin}${currentTone}`;
     const isCorrect = selectedTone === currentTone;
 
-    // Update stats
     if (isCorrect) {
         correctCount++;
         streak++;
-        // Show streak toast if milestone reached
         showStreakToast(streak);
-        // Reduce struggling count on correct answer
         if (strugglingTones[key]) {
             strugglingTones[key]--;
             if (strugglingTones[key] <= 0) {
@@ -334,7 +376,6 @@ function handleToneSelect(selectedTone) {
     } else {
         incorrectCount++;
         streak = 0;
-        // Increase struggling count
         strugglingTones[key] = (strugglingTones[key] || 0) + 1;
     }
 
@@ -342,7 +383,6 @@ function handleToneSelect(selectedTone) {
     updateStrugglingIndicator();
     saveProgress();
 
-    // Update button states
     toneButtons.forEach(btn => {
         const btnTone = parseInt(btn.dataset.tone);
         btn.disabled = true;
@@ -353,11 +393,8 @@ function handleToneSelect(selectedTone) {
         }
     });
 
-    // Reveal pinyin with tone mark
     pinyinDisplay.textContent = addToneMark(currentPinyin, currentTone);
     pinyinDisplay.classList.add('revealed');
-
-    // Show next button
     nextBtn.classList.add('visible');
 }
 
@@ -370,9 +407,82 @@ function updateStats() {
 
 // Update struggling indicator
 function updateStrugglingIndicator() {
-    const count = Object.keys(strugglingTones).filter(k => strugglingTones[k] >= 2).length;
+    const count = getStrugglingKeys().length;
     strugglingCountEl.textContent = count;
     strugglingIndicator.classList.toggle('visible', count > 0);
+}
+
+// Set practice mode
+function setPracticeMode(mode) {
+    practiceMode = mode;
+
+    // Update sidebar buttons
+    practiceModeBtn.classList.toggle('active', mode === 'all');
+    mistakesBtn.classList.toggle('active', mode === 'mistakes');
+
+    // Update mode banner
+    if (mode === 'mistakes') {
+        modeBanner.classList.add('visible', 'mistakes');
+        modeText.textContent = 'Practicing Mistakes';
+    } else {
+        modeBanner.classList.remove('visible', 'mistakes');
+    }
+
+    loadNewCard();
+}
+
+// Build sandbox grid
+function buildSandboxGrid(filter = '') {
+    sandboxGrid.innerHTML = '';
+    const syllables = Object.keys(SYLLABLE_TONES).sort();
+    const filtered = filter ? syllables.filter(s => s.includes(filter.toLowerCase())) : syllables;
+
+    if (filtered.length === 0) {
+        sandboxGrid.innerHTML = '<div class="empty-state">No matches found</div>';
+        return;
+    }
+
+    filtered.forEach(pinyin => {
+        const tones = SYLLABLE_TONES[pinyin];
+        const row = document.createElement('div');
+        row.className = 'sandbox-row';
+
+        const label = document.createElement('div');
+        label.className = 'sandbox-pinyin';
+        label.textContent = pinyin.includes('uu') ? pinyin.replace('uu', 'ü') : pinyin;
+        row.appendChild(label);
+
+        const tonesDiv = document.createElement('div');
+        tonesDiv.className = 'sandbox-tones';
+
+        for (const tone of tones) {
+            const btn = document.createElement('button');
+            btn.className = 'sandbox-tone-btn';
+            btn.textContent = addToneMark(pinyin, parseInt(tone));
+            btn.addEventListener('click', () => {
+                playSandboxAudio(pinyin, tone, btn);
+            });
+            tonesDiv.appendChild(btn);
+        }
+
+        row.appendChild(tonesDiv);
+        sandboxGrid.appendChild(row);
+    });
+}
+
+let sandboxAudio = null;
+function playSandboxAudio(pinyin, tone, btn) {
+    if (sandboxAudio) {
+        sandboxAudio.pause();
+    }
+
+    // Remove playing class from all buttons
+    document.querySelectorAll('.sandbox-tone-btn.playing').forEach(b => b.classList.remove('playing'));
+
+    sandboxAudio = new Audio(`${AUDIO_BASE_URL}${pinyin}${tone}.mp3`);
+    btn.classList.add('playing');
+    sandboxAudio.play().catch(e => console.log('Audio play failed:', e));
+    sandboxAudio.onended = () => btn.classList.remove('playing');
 }
 
 // Event Listeners
@@ -386,8 +496,63 @@ toneButtons.forEach(btn => {
 
 nextBtn.addEventListener('click', loadNewCard);
 
+// Sidebar buttons
+practiceModeBtn.addEventListener('click', () => setPracticeMode('all'));
+mistakesBtn.addEventListener('click', () => {
+    if (getStrugglingKeys().length === 0) {
+        alert('No mistakes to practice yet!');
+        return;
+    }
+    setPracticeMode('mistakes');
+});
+
+// Mode exit
+modeExit.addEventListener('click', () => setPracticeMode('all'));
+
+// Settings modal
+settingsBtn.addEventListener('click', () => settingsModal.classList.add('visible'));
+settingsClose.addEventListener('click', () => settingsModal.classList.remove('visible'));
+settingsModal.addEventListener('click', (e) => {
+    if (e.target === settingsModal) settingsModal.classList.remove('visible');
+});
+resetBtn.addEventListener('click', () => {
+    if (confirm('Are you sure you want to reset all progress?')) {
+        resetProgress();
+        settingsModal.classList.remove('visible');
+    }
+});
+
+// Sandbox modal
+sandboxBtn.addEventListener('click', () => {
+    buildSandboxGrid();
+    sandboxModal.classList.add('visible');
+});
+sandboxClose.addEventListener('click', () => {
+    if (sandboxAudio) sandboxAudio.pause();
+    sandboxModal.classList.remove('visible');
+});
+sandboxModal.addEventListener('click', (e) => {
+    if (e.target === sandboxModal) {
+        if (sandboxAudio) sandboxAudio.pause();
+        sandboxModal.classList.remove('visible');
+    }
+});
+sandboxSearch.addEventListener('input', (e) => {
+    buildSandboxGrid(e.target.value);
+});
+
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
+    // Don't trigger if modal is open or typing in search
+    if (settingsModal.classList.contains('visible') || sandboxModal.classList.contains('visible')) {
+        if (e.key === 'Escape') {
+            settingsModal.classList.remove('visible');
+            sandboxModal.classList.remove('visible');
+            if (sandboxAudio) sandboxAudio.pause();
+        }
+        return;
+    }
+
     if (e.key >= '1' && e.key <= '4' && !answered) {
         handleToneSelect(parseInt(e.key));
     } else if ((e.key === ' ' || e.key === 'Enter') && answered) {
@@ -399,4 +564,4 @@ document.addEventListener('keydown', (e) => {
 
 // Initialize
 loadProgress();
-loadNewCard();
+setPracticeMode('all');
