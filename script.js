@@ -189,6 +189,15 @@ const sandboxBtn = document.getElementById('sandbox-btn');
 const sandboxClose = document.getElementById('sandbox-close');
 const sandboxSearch = document.getElementById('sandbox-search');
 const sandboxGrid = document.getElementById('sandbox-grid');
+const sandboxTable = document.getElementById('sandbox-table');
+const pinyinTable = document.getElementById('pinyin-table');
+const listViewBtn = document.getElementById('list-view-btn');
+const tableViewBtn = document.getElementById('table-view-btn');
+const tonePickerOverlay = document.getElementById('tone-picker-overlay');
+const tonePickerTitle = document.getElementById('tone-picker-title');
+const tonePickerButtons = document.getElementById('tone-picker-buttons');
+
+let currentSandboxView = 'list';
 
 // Mode elements
 const practiceModeBtn = document.getElementById('practice-mode-btn');
@@ -309,10 +318,14 @@ function loadNewCard() {
     if (!card) {
         // No cards available (mistakes mode with no mistakes)
         pinyinDisplay.textContent = 'No mistakes to practice!';
-        pinyinDisplay.classList.add('revealed');
+        pinyinDisplay.classList.add('revealed', 'empty-message');
         toneButtons.forEach(btn => btn.disabled = true);
+        speakerBtn.style.display = 'none';
         return;
     }
+
+    speakerBtn.style.display = '';
+    pinyinDisplay.classList.remove('empty-message');
 
     currentPinyin = card.pinyin;
     currentTone = card.tone;
@@ -477,12 +490,115 @@ function playSandboxAudio(pinyin, tone, btn) {
     }
 
     // Remove playing class from all buttons
-    document.querySelectorAll('.sandbox-tone-btn.playing').forEach(b => b.classList.remove('playing'));
+    document.querySelectorAll('.sandbox-tone-btn.playing, .tone-picker-btn.playing').forEach(b => b.classList.remove('playing'));
 
     sandboxAudio = new Audio(`${AUDIO_BASE_URL}${pinyin}${tone}.mp3`);
-    btn.classList.add('playing');
+    if (btn) btn.classList.add('playing');
     sandboxAudio.play().catch(e => console.log('Audio play failed:', e));
-    sandboxAudio.onended = () => btn.classList.remove('playing');
+    sandboxAudio.onended = () => {
+        if (btn) btn.classList.remove('playing');
+    };
+}
+
+// Switch sandbox view
+function setSandboxView(view) {
+    currentSandboxView = view;
+    listViewBtn.classList.toggle('active', view === 'list');
+    tableViewBtn.classList.toggle('active', view === 'table');
+    sandboxGrid.classList.toggle('hidden', view === 'table');
+    sandboxTable.classList.toggle('visible', view === 'table');
+
+    if (view === 'table') {
+        buildPinyinTable();
+    }
+}
+
+// Build pinyin table as a simple grid
+function buildPinyinTable() {
+    pinyinTable.innerHTML = '';
+    const syllables = Object.keys(SYLLABLE_TONES).sort();
+
+    syllables.forEach(pinyin => {
+        const cell = document.createElement('button');
+        cell.className = 'table-cell';
+        cell.textContent = pinyin.includes('uu') ? pinyin.replace('uu', 'ü') : pinyin;
+        cell.addEventListener('click', (e) => showTonePicker(pinyin, e.currentTarget));
+        pinyinTable.appendChild(cell);
+    });
+}
+
+// Get the tone picker element
+const tonePicker = document.querySelector('.tone-picker');
+let activeTableCell = null;
+
+// Show tone picker popup positioned near the clicked cell
+function showTonePicker(pinyin, cellElement) {
+    // Remove active state from previous cell
+    if (activeTableCell) {
+        activeTableCell.classList.remove('active');
+    }
+    activeTableCell = cellElement;
+    cellElement.classList.add('active');
+
+    tonePickerButtons.innerHTML = '';
+    const tones = SYLLABLE_TONES[pinyin];
+
+    for (const tone of tones) {
+        const btn = document.createElement('button');
+        btn.className = 'tone-picker-btn';
+        btn.innerHTML = `
+            <span class="tone-picker-mark">${addToneMark(pinyin, parseInt(tone))}</span>
+            <span class="tone-picker-num">${tone}</span>
+        `;
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            playSandboxAudio(pinyin, tone, btn);
+        });
+        tonePickerButtons.appendChild(btn);
+    }
+
+    // Position the picker near the cell
+    const rect = cellElement.getBoundingClientRect();
+    const pickerWidth = tones.length * 52 + (tones.length - 1) * 4 + 12;
+    const pickerHeight = 60;
+
+    // Calculate left position (centered under cell)
+    let left = rect.left + (rect.width / 2) - (pickerWidth / 2);
+
+    // Keep within viewport horizontally
+    const padding = 8;
+    if (left < padding) left = padding;
+    if (left + pickerWidth > window.innerWidth - padding) {
+        left = window.innerWidth - pickerWidth - padding;
+    }
+
+    // Position below or above based on available space
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const positionAbove = spaceBelow < pickerHeight + 20;
+
+    tonePicker.style.left = `${left}px`;
+    tonePicker.classList.toggle('above', positionAbove);
+
+    if (positionAbove) {
+        tonePicker.style.top = `${rect.top - pickerHeight - 8}px`;
+    } else {
+        tonePicker.style.top = `${rect.bottom + 8}px`;
+    }
+
+    tonePickerOverlay.classList.add('visible');
+}
+
+// Hide tone picker
+function hideTonePicker() {
+    tonePickerOverlay.classList.remove('visible');
+    tonePicker.classList.remove('above');
+    if (activeTableCell) {
+        activeTableCell.classList.remove('active');
+        activeTableCell = null;
+    }
+    if (sandboxAudio) {
+        sandboxAudio.pause();
+    }
 }
 
 // Event Listeners
@@ -525,24 +641,48 @@ resetBtn.addEventListener('click', () => {
 // Sandbox modal
 sandboxBtn.addEventListener('click', () => {
     buildSandboxGrid();
+    if (currentSandboxView === 'table') {
+        buildPinyinTable();
+    }
     sandboxModal.classList.add('visible');
 });
 sandboxClose.addEventListener('click', () => {
     if (sandboxAudio) sandboxAudio.pause();
     sandboxModal.classList.remove('visible');
+    hideTonePicker();
 });
 sandboxModal.addEventListener('click', (e) => {
     if (e.target === sandboxModal) {
         if (sandboxAudio) sandboxAudio.pause();
         sandboxModal.classList.remove('visible');
+        hideTonePicker();
     }
 });
 sandboxSearch.addEventListener('input', (e) => {
     buildSandboxGrid(e.target.value);
 });
 
+// View toggle
+listViewBtn.addEventListener('click', () => setSandboxView('list'));
+tableViewBtn.addEventListener('click', () => setSandboxView('table'));
+
+// Tone picker
+tonePickerOverlay.addEventListener('click', (e) => {
+    if (e.target === tonePickerOverlay) {
+        hideTonePicker();
+    }
+});
+
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
+    // Handle tone picker
+    if (tonePickerOverlay.classList.contains('visible')) {
+        if (e.key === 'Escape') {
+            hideTonePicker();
+        }
+        return;
+    }
+
     // Don't trigger if modal is open or typing in search
     if (settingsModal.classList.contains('visible') || sandboxModal.classList.contains('visible')) {
         if (e.key === 'Escape') {

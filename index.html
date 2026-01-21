@@ -27,39 +27,6 @@
         </div>
     </div>
 
-    <!-- Sandbox Modal -->
-    <div class="modal-overlay" id="sandbox-modal">
-        <div class="modal modal-large">
-            <div class="modal-header">
-                <h3>Explore All Tones</h3>
-                <button class="modal-close" id="sandbox-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="sandbox-controls">
-                    <input type="text" class="search-input" id="sandbox-search" placeholder="Search pinyin...">
-                    <div class="view-toggle">
-                        <button class="view-toggle-btn active" id="list-view-btn" title="List View">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
-                                <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
-                            </svg>
-                        </button>
-                        <button class="view-toggle-btn" id="table-view-btn" title="Table View">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-                                <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-                <div class="sandbox-grid" id="sandbox-grid"></div>
-                <div class="sandbox-table" id="sandbox-table">
-                    <div class="pinyin-table" id="pinyin-table"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Tone Picker Popup -->
     <div class="tone-picker-overlay" id="tone-picker-overlay">
         <div class="tone-picker">
@@ -72,19 +39,19 @@
     <div class="app-container">
         <!-- Sidebar -->
         <div class="sidebar">
-            <button class="sidebar-btn" id="practice-mode-btn" title="Practice Mode">
+            <button class="sidebar-btn active" id="practice-mode-btn" title="Practice Mode">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
                 </svg>
             </button>
-            <button class="sidebar-btn" id="mistakes-btn" title="Practice Mistakes">
+            <button class="sidebar-btn" id="mistakes-btn" title="Review Mistakes">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="10"/>
                     <line x1="12" y1="8" x2="12" y2="12"/>
                     <line x1="12" y1="16" x2="12.01" y2="16"/>
                 </svg>
             </button>
-            <button class="sidebar-btn" id="sandbox-btn" title="Explore All Tones">
+            <button class="sidebar-btn" id="explore-btn" title="Explore All Tones">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="3" y="3" width="7" height="7"/>
                     <rect x="14" y="3" width="7" height="7"/>
@@ -101,12 +68,13 @@
             </button>
         </div>
 
-        <!-- Main Content -->
-        <div class="main-content">
+        <!-- Practice Page -->
+        <div class="page" id="practice-page">
             <div class="container">
-                <!-- Mode indicator -->
+                <!-- Mode indicator for review -->
                 <div class="mode-banner" id="mode-banner">
-                    <span id="mode-text">Practice Mode</span>
+                    <span id="mode-text">Reviewing Mistakes</span>
+                    <span class="mode-count" id="mode-count">0 remaining</span>
                     <button class="mode-exit" id="mode-exit">&times;</button>
                 </div>
 
@@ -123,10 +91,6 @@
                         <div class="stat-value incorrect" id="incorrect-count">0</div>
                         <div class="stat-label">Incorrect</div>
                     </div>
-                </div>
-
-                <div class="review-banner" id="review-banner">
-                    Reviewing Difficult Tones
                 </div>
 
                 <div class="flashcard">
@@ -168,6 +132,19 @@
 
                 <div class="struggling-indicator" id="struggling-indicator">
                     <span id="struggling-count">0</span> tones need more practice
+                </div>
+            </div>
+        </div>
+
+        <!-- Explore Page -->
+        <div class="page hidden" id="explore-page">
+            <div class="explore-container">
+                <div class="explore-header">
+                    <h2>Pinyin Chart</h2>
+                    <input type="text" class="search-input" id="explore-search" placeholder="Search pinyin...">
+                </div>
+                <div class="pinyin-chart-wrapper">
+                    <div class="pinyin-chart" id="pinyin-chart"></div>
                 </div>
             </div>
         </div>
