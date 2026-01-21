@@ -218,6 +218,7 @@ const modeCount = document.getElementById('mode-count');
 const modeExit = document.getElementById('mode-exit');
 
 // Navigation elements (desktop widgets)
+const practiceBtn = document.getElementById('practice-btn');
 const mistakesBtn = document.getElementById('mistakes-btn');
 const exploreBtn = document.getElementById('explore-btn');
 const settingsBtnWidget = document.getElementById('settings-btn');
@@ -721,6 +722,10 @@ menuSettings.addEventListener('click', () => {
 });
 
 // Desktop widget buttons
+practiceBtn.addEventListener('click', () => {
+    setPracticeMode('all');
+});
+
 mistakesBtn.addEventListener('click', () => {
     if (getStrugglingKeys().length === 0) {
         alert('No mistakes to review yet! Make some mistakes first.');
