@@ -176,6 +176,7 @@ let answered = false;
 let audio = null;
 let practiceMode = 'all'; // 'all' or 'mistakes'
 let currentPage = 'practice'; // 'practice' or 'explore'
+let userHasInteracted = false; // Track if user has interacted (for autoplay)
 
 // Spaced repetition tracking
 let strugglingTones = {}; // { "ba1": wrongCount, ... }
@@ -369,7 +370,7 @@ function loadNewCard() {
     audio.preload = 'auto';
 
     audio.addEventListener('canplaythrough', () => {
-        if (!answered) playAudio();
+        if (!answered && userHasInteracted) playAudio();
     }, { once: true });
 
     audio.addEventListener('error', () => {
@@ -672,7 +673,10 @@ function hideTonePicker() {
 }
 
 // Event Listeners
-speakerBtn.addEventListener('click', playAudio);
+speakerBtn.addEventListener('click', () => {
+    userHasInteracted = true;
+    playAudio();
+});
 
 toneButtons.forEach(btn => {
     btn.addEventListener('click', () => {
