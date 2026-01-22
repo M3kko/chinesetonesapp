@@ -376,18 +376,24 @@ function loadNewCard() {
     audio.addEventListener('error', () => {
         console.log('Audio failed to load:', currentPinyin + currentTone);
     }, { once: true });
+
+    // Start loading immediately
+    audio.load();
 }
 
 // Play audio
 function playAudio() {
-    if (audio && audio.readyState >= 2) {
-        audio.currentTime = 0;
-        audio.play().catch(e => console.log('Audio play failed:', e));
-    } else if (audio) {
+    if (!audio) return;
+
+    audio.currentTime = 0;
+    audio.play().catch(e => {
+        console.log('Audio play failed, retrying:', e);
+        // If play fails, try loading and playing again
+        audio.load();
         audio.addEventListener('canplaythrough', () => {
-            audio.play().catch(e => console.log('Audio play failed:', e));
+            audio.play().catch(err => console.log('Audio retry failed:', err));
         }, { once: true });
-    }
+    });
 }
 
 // Handle tone selection
