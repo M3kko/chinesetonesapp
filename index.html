@@ -291,20 +291,19 @@
 
         <!-- Radicals Page -->
         <div class="page hidden" id="radicals-page">
-            <div class="radicals-container">
-                <!-- Practice Area -->
-                <div class="radicals-practice" id="radicals-practice">
-                    <div class="radicals-practice-header">
-                        <button class="back-btn" id="radicals-practice-back">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M19 12H5M12 19l-7-7 7-7"/>
-                            </svg>
-                            Back
-                        </button>
-                        <div class="radicals-mode-indicator" id="radicals-mode-indicator">Mixed Mode</div>
-                    </div>
+            <div class="practice-container">
+                <div class="practice-header">
+                    <button class="back-btn" id="radicals-practice-back">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        Back
+                    </button>
+                    <div class="radicals-mode-indicator" id="radicals-mode-indicator">Mixed Mode</div>
+                </div>
 
-                    <div class="radicals-stats">
+                <div class="container">
+                    <div class="stats">
                         <div class="stat">
                             <div class="stat-value correct-val" id="radicals-correct">0</div>
                             <div class="stat-label">Correct</div>
@@ -319,16 +318,14 @@
                         </div>
                     </div>
 
-                    <div class="radicals-card">
-                        <div class="radicals-prompt" id="radicals-prompt">
-                            <!-- Will show radical character, meaning, or speaker button depending on mode -->
-                        </div>
-                        <div class="radicals-pinyin" id="radicals-pinyin-hint"></div>
-                        <button class="speaker-btn radicals-speaker" id="radicals-speaker" aria-label="Play audio">
+                    <div class="flashcard radicals-card">
+                        <div class="radicals-prompt" id="radicals-prompt"></div>
+                        <button class="speaker-btn" id="radicals-speaker" aria-label="Play audio">
                             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
                             </svg>
                         </button>
+                        <div class="radicals-pinyin" id="radicals-pinyin-hint"></div>
                     </div>
 
                     <div class="radicals-choices" id="radicals-choices">
@@ -340,6 +337,10 @@
                     <div class="struggling-indicator" id="radicals-struggling-indicator">
                         <span id="radicals-struggling-count">0</span> radicals need more practice
                     </div>
+
+                    <footer class="site-footer">
+                        Built with ❤️ by <a href="https://brody.gg" target="_blank" rel="noopener">brody</a>
+                    </footer>
                 </div>
             </div>
         </div>

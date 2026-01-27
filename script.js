@@ -972,16 +972,16 @@ function setupRadicalPrompt() {
     const showRadical = currentRadicalMode === 'radical-meaning';
     const showMeaning = currentRadicalMode === 'meaning-radical';
 
-    // Show/hide speaker button
-    radicalsSpeaker.style.display = isAudioMode ? '' : 'none';
+    // Show/hide speaker button (use visibility to prevent layout shift)
+    radicalsSpeaker.style.visibility = isAudioMode ? 'visible' : 'hidden';
 
     // Setup prompt content
     if (isAudioMode) {
-        radicalsPrompt.textContent = 'Listen';
+        radicalsPrompt.textContent = 'Listen & Choose';
         radicalsPrompt.className = 'radicals-prompt audio-mode';
     } else if (showRadical) {
         radicalsPrompt.textContent = currentRadical.radical;
-        radicalsPrompt.className = 'radicals-prompt radical-mode';
+        radicalsPrompt.className = 'radicals-prompt';
     } else if (showMeaning) {
         radicalsPrompt.textContent = currentRadical.english;
         radicalsPrompt.className = 'radicals-prompt meaning-mode';
@@ -992,9 +992,8 @@ function setupRadicalPrompt() {
     // Never show on audio modes (audio IS the pinyin) or meaning-radical (would give away answer)
     if (showPinyinHints && showRadical) {
         radicalsPinyinHint.textContent = currentRadical.pinyin;
-        radicalsPinyinHint.style.display = '';
     } else {
-        radicalsPinyinHint.style.display = 'none';
+        radicalsPinyinHint.textContent = '';
     }
 }
 
@@ -1064,30 +1063,19 @@ function handleRadicalChoice(selectedId) {
         btn.disabled = true;
         if (btnId === currentRadical.id) {
             btn.classList.add('correct');
-            // Show the full answer
-            const showRadicalChoices = currentRadicalMode === 'audio-radical' || currentRadicalMode === 'meaning-radical';
-            if (showRadicalChoices) {
-                btn.innerHTML = `
-                    <span class="choice-main">${currentRadical.radical}</span>
-                    <span class="choice-hint">${currentRadical.pinyin} - ${currentRadical.english}</span>
-                `;
-            } else {
-                btn.innerHTML = `
-                    <span class="choice-main">${currentRadical.english}</span>
-                    <span class="choice-hint">${currentRadical.radical} (${currentRadical.pinyin})</span>
-                `;
-            }
         } else if (btnId === selectedId && !isCorrect) {
             btn.classList.add('incorrect');
         }
     });
 
-    // Update prompt to show full info
+    // Update prompt to show full info (reveal answer)
     if (currentRadicalMode === 'audio-meaning' || currentRadicalMode === 'audio-radical') {
         radicalsPrompt.textContent = currentRadical.radical;
-        radicalsPrompt.className = 'radicals-prompt radical-mode revealed';
+        radicalsPrompt.classList.remove('audio-mode');
+        radicalsPrompt.classList.add('revealed');
         radicalsPinyinHint.textContent = `${currentRadical.pinyin} - ${currentRadical.english}`;
-        radicalsPinyinHint.style.display = '';
+    } else {
+        radicalsPrompt.classList.add('revealed');
     }
 
     radicalsNextBtn.classList.add('visible');
