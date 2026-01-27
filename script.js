@@ -972,8 +972,8 @@ function setupRadicalPrompt() {
     const showRadical = currentRadicalMode === 'radical-meaning';
     const showMeaning = currentRadicalMode === 'meaning-radical';
 
-    // Show/hide speaker button (use visibility to prevent layout shift)
-    radicalsSpeaker.style.visibility = isAudioMode ? 'visible' : 'hidden';
+    // Show/hide speaker button
+    radicalsSpeaker.classList.toggle('hidden', !isAudioMode);
 
     // Setup prompt content
     if (isAudioMode) {
@@ -987,7 +987,7 @@ function setupRadicalPrompt() {
         radicalsPrompt.className = 'radicals-prompt meaning-mode';
     }
 
-    // Setup pinyin hint on prompt
+    // Setup pinyin hint below prompt
     // Only show on radical-meaning mode (character shown, picking English)
     // Never show on audio modes (audio IS the pinyin) or meaning-radical (would give away answer)
     if (showPinyinHints && showRadical) {
