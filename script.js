@@ -1289,13 +1289,8 @@ function hideTonePicker() {
 // Event Listeners
 
 // Landing page
-landingSignin.addEventListener('click', () => {
-    alert('Account creation is coming soon!');
-});
-
-landingCreate.addEventListener('click', () => {
-    alert('Account creation is coming soon!');
-});
+// Sign in and create account - coming soon
+// landingSignin and landingCreate are disabled in HTML
 
 landingGuest.addEventListener('click', () => {
     continueToSelection();
