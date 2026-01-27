@@ -949,3 +949,352 @@ body {
 .site-footer a:hover {
     color: #fafafa;
 }
+
+/* ==================== RADICALS PAGE ==================== */
+
+.radicals-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.radicals-mode-select {
+    text-align: center;
+}
+
+.radicals-mode-select h2 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #fafafa;
+    margin: 24px 0 8px;
+}
+
+.radicals-subtitle {
+    color: #71717a;
+    font-size: 14px;
+    margin-bottom: 32px;
+}
+
+/* Mode Cards */
+.mode-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.mode-card {
+    background: #18181b;
+    border: 1px solid #27272a;
+    border-radius: 12px;
+    padding: 20px 16px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: center;
+}
+
+.mode-card:hover {
+    background: #1f1f23;
+    border-color: #3f3f46;
+    transform: translateY(-2px);
+}
+
+.mode-card:active {
+    transform: translateY(0);
+}
+
+.mode-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+}
+
+.mode-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fafafa;
+    margin-bottom: 6px;
+}
+
+.mode-desc {
+    font-size: 12px;
+    color: #71717a;
+    line-height: 1.4;
+}
+
+/* Radicals Options */
+.radicals-options {
+    margin-bottom: 24px;
+}
+
+.toggle-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    color: #a1a1aa;
+    font-size: 14px;
+}
+
+.toggle-option input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #22c55e;
+    cursor: pointer;
+}
+
+/* Stats Summary */
+.radicals-stats-summary {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    padding: 16px;
+    background: #0f0f11;
+    border-radius: 12px;
+    border: 1px solid #27272a;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-num {
+    display: block;
+    font-size: 24px;
+    font-weight: 600;
+    color: #fafafa;
+    font-variant-numeric: tabular-nums;
+}
+
+.stat-text {
+    font-size: 12px;
+    color: #71717a;
+}
+
+/* Radicals Practice Area */
+.radicals-practice {
+    text-align: center;
+}
+
+.radicals-practice-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.radicals-mode-indicator {
+    flex: 1;
+    text-align: center;
+    font-size: 14px;
+    color: #71717a;
+    padding-right: 80px; /* Balance the back button */
+}
+
+.radicals-stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 24px;
+}
+
+.radicals-stats .stat {
+    text-align: center;
+}
+
+.radicals-stats .stat-value {
+    font-size: 28px;
+    font-weight: 600;
+    color: #fafafa;
+    font-variant-numeric: tabular-nums;
+}
+
+.radicals-stats .stat-value.correct-val {
+    color: #22c55e;
+}
+
+.radicals-stats .stat-value.incorrect {
+    color: #ef4444;
+}
+
+.radicals-stats .stat-label {
+    font-size: 12px;
+    color: #71717a;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Radicals Card */
+.radicals-card {
+    background: #18181b;
+    border: 1px solid #27272a;
+    border-radius: 16px;
+    padding: 32px 24px;
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.radicals-prompt {
+    font-size: 24px;
+    color: #a1a1aa;
+    margin-bottom: 8px;
+}
+
+.radicals-prompt.radical-mode {
+    font-size: 72px;
+    color: #fafafa;
+    line-height: 1.2;
+}
+
+.radicals-prompt.meaning-mode {
+    font-size: 28px;
+    color: #fafafa;
+    text-transform: capitalize;
+}
+
+.radicals-prompt.revealed {
+    color: #22c55e;
+}
+
+.radicals-pinyin {
+    font-size: 16px;
+    color: #71717a;
+    margin-top: 8px;
+}
+
+.radicals-speaker {
+    margin-top: 16px;
+}
+
+/* Radicals Choices */
+.radicals-choices {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.radical-choice-btn {
+    background: #18181b;
+    border: 1px solid #27272a;
+    border-radius: 12px;
+    padding: 16px 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.radical-choice-btn:hover:not(:disabled) {
+    background: #1f1f23;
+    border-color: #3f3f46;
+}
+
+.radical-choice-btn:disabled {
+    cursor: default;
+}
+
+.radical-choice-btn.correct {
+    background: rgba(34, 197, 94, 0.15);
+    border-color: #22c55e;
+}
+
+.radical-choice-btn.incorrect {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: #ef4444;
+}
+
+.choice-main {
+    font-size: 28px;
+    color: #fafafa;
+}
+
+.radical-choice-btn.correct .choice-main {
+    color: #22c55e;
+}
+
+.radical-choice-btn.incorrect .choice-main {
+    color: #ef4444;
+}
+
+/* When showing English meanings */
+.radical-choice-btn .choice-main:only-child {
+    font-size: 16px;
+    text-transform: capitalize;
+}
+
+.choice-hint {
+    font-size: 12px;
+    color: #71717a;
+}
+
+.radical-choice-btn.correct .choice-hint,
+.radical-choice-btn.incorrect .choice-hint {
+    color: #a1a1aa;
+}
+
+/* Radicals struggling indicator */
+#radicals-struggling-indicator {
+    color: #fbbf24;
+    font-size: 13px;
+    margin-top: 16px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+#radicals-struggling-indicator.visible {
+    opacity: 1;
+}
+
+/* Mobile Responsive for Radicals */
+@media (max-width: 768px) {
+    .radicals-container {
+        padding: 16px;
+    }
+
+    .mode-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .mode-card {
+        padding: 16px;
+    }
+
+    .mode-icon {
+        font-size: 28px;
+    }
+
+    .radicals-prompt.radical-mode {
+        font-size: 56px;
+    }
+
+    .radicals-choices {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .choice-main {
+        font-size: 24px;
+    }
+
+    .radicals-stats-summary {
+        gap: 20px;
+    }
+
+    .stat-num {
+        font-size: 20px;
+    }
+
+    .radicals-practice-header {
+        flex-wrap: wrap;
+    }
+
+    .radicals-mode-indicator {
+        padding-right: 0;
+        order: -1;
+        width: 100%;
+        margin-bottom: 8px;
+    }
+}
