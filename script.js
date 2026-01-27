@@ -1070,6 +1070,8 @@ function handleRadicalChoice(selectedId) {
 
     // Update prompt to show full info (reveal answer)
     if (currentRadicalMode === 'audio-meaning' || currentRadicalMode === 'audio-radical') {
+        // Hide speaker and show the character instead
+        radicalsSpeaker.classList.add('hidden');
         radicalsPrompt.textContent = currentRadical.radical;
         radicalsPrompt.classList.remove('audio-mode');
         radicalsPrompt.classList.add('revealed');
