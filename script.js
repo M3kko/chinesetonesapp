@@ -862,10 +862,17 @@ function shuffleArray(array) {
     return shuffled;
 }
 
+// Update start button state based on selected modes
+function updateStartButtonState() {
+    const anySelected = Array.from(modeToggles).some(toggle => toggle.checked);
+    startRadicalsBtn.disabled = !anySelected;
+}
+
 // Show radicals mode selection modal
 function showRadicalsModeModal() {
     // Load saved pinyin preference
     modalPinyinToggle.checked = showPinyinHints;
+    updateStartButtonState();
     radicalsModeModal.classList.add('visible');
 }
 
@@ -1332,6 +1339,11 @@ radicalsModeModal.addEventListener('click', (e) => {
 });
 
 startRadicalsBtn.addEventListener('click', startRadicalsPractice);
+
+// Update button state when mode toggles change
+modeToggles.forEach(toggle => {
+    toggle.addEventListener('change', updateStartButtonState);
+});
 
 // Pinyin practice
 speakerBtn.addEventListener('click', () => {

@@ -1261,21 +1261,89 @@ body {
     margin-bottom: 24px;
 }
 
+.switch-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.switch-label {
+    color: #a1a1aa;
+    font-size: 14px;
+}
+
+.switch {
+    position: relative;
+    width: 44px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #27272a;
+    border-radius: 24px;
+    transition: all 0.2s ease;
+}
+
+.switch-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background: #71717a;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.switch input:checked + .switch-slider {
+    background: #22c55e;
+}
+
+.switch input:checked + .switch-slider:before {
+    transform: translateX(20px);
+    background: #fafafa;
+}
+
 .start-practice-btn {
     width: 100%;
-    padding: 14px;
-    background: #22c55e;
+    padding: 14px 24px;
+    background: #fafafa;
     color: #09090b;
     border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 600;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.15s ease;
 }
 
-.start-practice-btn:hover {
-    background: #16a34a;
+.start-practice-btn:hover:not(:disabled) {
+    background: #e4e4e7;
+    transform: translateY(-1px);
+}
+
+.start-practice-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.start-practice-btn:disabled {
+    background: #27272a;
+    color: #52525b;
+    cursor: not-allowed;
 }
 
 /* ==================== RADICALS PAGE ==================== */

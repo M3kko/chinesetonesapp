@@ -10,7 +10,6 @@
     <!-- Landing Page -->
     <div class="landing-page" id="landing-page">
         <div class="landing-container">
-            <div class="landing-logo">茶</div>
             <h1 class="landing-title">polyglot.cafe</h1>
             <p class="landing-subtitle">Master Chinese tones and radicals through focused practice</p>
 
@@ -39,7 +38,6 @@
 
             <div class="practice-options">
                 <button class="practice-option" id="select-pinyin">
-                    <div class="option-icon">声</div>
                     <div class="option-content">
                         <div class="option-title">Pinyin Tones</div>
                         <div class="option-desc">Listen and identify the four tones of Mandarin Chinese</div>
@@ -48,7 +46,6 @@
                 </button>
 
                 <button class="practice-option" id="select-radicals">
-                    <div class="option-icon">部</div>
                     <div class="option-content">
                         <div class="option-title">Radicals</div>
                         <div class="option-desc">Learn the 214 Kangxi radicals - the building blocks of Chinese characters</div>
@@ -120,9 +117,12 @@
                 </div>
 
                 <div class="modal-options">
-                    <label class="toggle-option">
-                        <input type="checkbox" id="modal-pinyin-toggle" checked>
-                        <span class="toggle-label">Show pinyin hints</span>
+                    <label class="switch-option">
+                        <span class="switch-label">Show pinyin hints</span>
+                        <div class="switch">
+                            <input type="checkbox" id="modal-pinyin-toggle" checked>
+                            <span class="switch-slider"></span>
+                        </div>
                     </label>
                 </div>
 
