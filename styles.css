@@ -1025,9 +1025,14 @@ body {
     border: none;
 }
 
-.landing-btn.primary:hover {
+.landing-btn.primary:hover:not(.disabled) {
     background: #e4e4e7;
     transform: translateY(-1px);
+}
+
+.landing-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .landing-btn.secondary {

@@ -1290,15 +1290,11 @@ function hideTonePicker() {
 
 // Landing page
 landingSignin.addEventListener('click', () => {
-    // TODO: Implement sign in
-    alert('Sign in coming soon! Continuing as guest...');
-    continueToSelection();
+    alert('Account creation is coming soon!');
 });
 
 landingCreate.addEventListener('click', () => {
-    // TODO: Implement account creation
-    alert('Account creation coming soon! Continuing as guest...');
-    continueToSelection();
+    alert('Account creation is coming soon!');
 });
 
 landingGuest.addEventListener('click', () => {
