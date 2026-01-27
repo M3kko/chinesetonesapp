@@ -1167,6 +1167,7 @@ body {
     align-items: center;
     justify-content: space-between;
     margin-bottom: 24px;
+    position: relative;
 }
 
 .practice-header-actions {
@@ -1483,8 +1484,9 @@ body {
 }
 
 .radicals-mode-indicator {
-    flex: 1;
-    text-align: center;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     font-size: 14px;
     color: #71717a;
 }
@@ -1492,16 +1494,27 @@ body {
 /* Radicals Card - uses .flashcard base styles */
 .radicals-card {
     min-height: 180px;
+    position: relative;
+}
+
+.radicals-card-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    text-align: center;
+    width: 100%;
 }
 
 .radicals-prompt {
     font-size: 56px;
     color: #fafafa;
     line-height: 1.2;
+    text-align: center;
 }
 
 .radicals-prompt.audio-mode {
@@ -1519,7 +1532,7 @@ body {
 }
 
 .radicals-card .speaker-btn {
-    margin: 12px 0;
+    margin-bottom: 8px;
 }
 
 .radicals-card .speaker-btn.hidden {
@@ -1527,10 +1540,13 @@ body {
 }
 
 .radicals-pinyin {
+    position: absolute;
+    bottom: 12px;
+    left: 0;
+    right: 0;
     font-size: 14px;
     color: #71717a;
-    min-height: 20px;
-    margin-top: 8px;
+    text-align: center;
 }
 
 /* Radicals Choices */
@@ -1650,14 +1666,4 @@ body {
         font-size: 20px;
     }
 
-    .radicals-practice-header {
-        flex-wrap: wrap;
-    }
-
-    .radicals-mode-indicator {
-        padding-right: 0;
-        order: -1;
-        width: 100%;
-        margin-bottom: 8px;
-    }
 }
