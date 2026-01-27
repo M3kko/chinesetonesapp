@@ -421,14 +421,15 @@ let streak = 0;
 let answered = false;
 let audio = null;
 let practiceMode = 'all'; // 'all' or 'mistakes'
-let currentPage = 'practice'; // 'practice', 'explore', or 'radicals'
+let currentPage = 'landing'; // 'landing', 'selection', 'practice', 'explore', or 'radicals'
 let userHasInteracted = false; // Track if user has interacted (for autoplay)
 
 // Spaced repetition tracking
 let strugglingTones = {}; // { "ba1": wrongCount, ... }
 
 // Radicals state
-let radicalsMode = null; // 'audio-meaning', 'audio-radical', 'radical-meaning', 'meaning-radical'
+let radicalsModes = ['audio-meaning', 'audio-radical', 'radical-meaning', 'meaning-radical']; // Selected modes for practice
+let currentRadicalMode = null; // Current mode being used for this card
 let currentRadical = null;
 let radicalsCorrect = 0;
 let radicalsIncorrect = 0;
@@ -452,11 +453,29 @@ const streakToast = document.getElementById('streak-toast');
 const streakToastCount = document.getElementById('streak-toast-count');
 const streakToastMessage = document.getElementById('streak-toast-message');
 
+// Landing and Selection page elements
+const landingPage = document.getElementById('landing-page');
+const selectionPage = document.getElementById('selection-page');
+const appContainer = document.getElementById('app-container');
+const landingSignin = document.getElementById('landing-signin');
+const landingCreate = document.getElementById('landing-create');
+const landingGuest = document.getElementById('landing-guest');
+const selectPinyin = document.getElementById('select-pinyin');
+const selectRadicals = document.getElementById('select-radicals');
+const selectionBack = document.getElementById('selection-back');
+
 // Modal elements
 const settingsModal = document.getElementById('settings-modal');
 const settingsBtn = document.getElementById('settings-btn');
 const settingsClose = document.getElementById('settings-close');
 const resetBtn = document.getElementById('reset-btn');
+
+// Radicals mode modal elements
+const radicalsModeModal = document.getElementById('radicals-mode-modal');
+const radicalsModeClose = document.getElementById('radicals-mode-close');
+const startRadicalsBtn = document.getElementById('start-radicals-btn');
+const modalPinyinToggle = document.getElementById('modal-pinyin-toggle');
+const modeToggles = document.querySelectorAll('input[name="radical-mode"]');
 
 // Page elements
 const practicePage = document.getElementById('practice-page');
@@ -475,28 +494,15 @@ const modeText = document.getElementById('mode-text');
 const modeCount = document.getElementById('mode-count');
 const modeExit = document.getElementById('mode-exit');
 
-// Navigation elements (desktop widgets)
-const practiceBtn = document.getElementById('practice-btn');
+// Navigation elements
+const pinyinBackBtn = document.getElementById('pinyin-back-btn');
 const mistakesBtn = document.getElementById('mistakes-btn');
 const exploreBtn = document.getElementById('explore-btn');
-const settingsBtnWidget = document.getElementById('settings-btn');
 const backBtn = document.getElementById('back-btn');
-
-// Mobile menu elements
-const menuBtn = document.getElementById('menu-btn');
-const menuOverlay = document.getElementById('menu-overlay');
-const menuPractice = document.getElementById('menu-practice');
-const menuMistakes = document.getElementById('menu-mistakes');
-const menuExplore = document.getElementById('menu-explore');
-const menuRadicals = document.getElementById('menu-radicals');
-const menuSettings = document.getElementById('menu-settings');
 
 // Radicals page elements
 const radicalsPage = document.getElementById('radicals-page');
-const radicalsModeSelect = document.getElementById('radicals-mode-select');
 const radicalsPractice = document.getElementById('radicals-practice');
-const radicalsBtn = document.getElementById('radicals-btn');
-const radicalsBackBtn = document.getElementById('radicals-back-btn');
 const radicalsPracticeBack = document.getElementById('radicals-practice-back');
 const radicalsModeIndicator = document.getElementById('radicals-mode-indicator');
 const radicalsPrompt = document.getElementById('radicals-prompt');
@@ -509,11 +515,6 @@ const radicalsIncorrectEl = document.getElementById('radicals-incorrect');
 const radicalsStreakEl = document.getElementById('radicals-streak');
 const radicalsStrugglingIndicator = document.getElementById('radicals-struggling-indicator');
 const radicalsStrugglingCount = document.getElementById('radicals-struggling-count');
-const showPinyinToggle = document.getElementById('show-pinyin-toggle');
-const radicalsMasteredEl = document.getElementById('radicals-mastered');
-const radicalsLearningEl = document.getElementById('radicals-learning');
-const radicalsNewEl = document.getElementById('radicals-new');
-const modeCards = document.querySelectorAll('.mode-card');
 
 // Streak milestones and messages
 const STREAK_MESSAGES = {
@@ -748,6 +749,10 @@ function updateModeCount() {
 function switchPage(page) {
     currentPage = page;
 
+    // Hide all pages
+    landingPage.classList.toggle('hidden', page !== 'landing');
+    selectionPage.classList.toggle('hidden', page !== 'selection');
+    appContainer.classList.toggle('hidden', !['practice', 'explore', 'radicals'].includes(page));
     practicePage.classList.toggle('hidden', page !== 'practice');
     explorePage.classList.toggle('hidden', page !== 'explore');
     radicalsPage.classList.toggle('hidden', page !== 'radicals');
@@ -755,9 +760,22 @@ function switchPage(page) {
     if (page === 'explore') {
         buildPinyinChart();
     }
-    if (page === 'radicals') {
-        updateRadicalsStatsSummary();
+}
+
+// Check if user has visited before
+function checkFirstVisit() {
+    const hasVisited = localStorage.getItem('polyglotVisited');
+    if (hasVisited) {
+        switchPage('selection');
+    } else {
+        switchPage('landing');
     }
+}
+
+// Continue to selection (from landing)
+function continueToSelection() {
+    localStorage.setItem('polyglotVisited', 'true');
+    switchPage('selection');
 }
 
 // ==================== RADICALS PRACTICE ====================
@@ -844,30 +862,59 @@ function shuffleArray(array) {
     return shuffled;
 }
 
-// Start radicals practice with selected mode
-function startRadicalsPractice(mode) {
-    radicalsMode = mode;
-    radicalsModeSelect.classList.add('hidden');
-    radicalsPractice.classList.remove('hidden');
+// Show radicals mode selection modal
+function showRadicalsModeModal() {
+    // Load saved pinyin preference
+    modalPinyinToggle.checked = showPinyinHints;
+    radicalsModeModal.classList.add('visible');
+}
+
+// Hide radicals mode modal
+function hideRadicalsModeModal() {
+    radicalsModeModal.classList.remove('visible');
+}
+
+// Start radicals practice with selected modes
+function startRadicalsPractice() {
+    // Get selected modes from checkboxes
+    const selectedModes = [];
+    modeToggles.forEach(toggle => {
+        if (toggle.checked) {
+            selectedModes.push(toggle.value);
+        }
+    });
+
+    if (selectedModes.length === 0) {
+        alert('Please select at least one practice mode');
+        return;
+    }
+
+    radicalsModes = selectedModes;
+    showPinyinHints = modalPinyinToggle.checked;
+    saveRadicalsProgress();
+
+    hideRadicalsModeModal();
+    switchPage('radicals');
 
     // Update mode indicator text
-    const modeNames = {
-        'audio-meaning': 'Audio → Meaning',
-        'audio-radical': 'Audio → Radical',
-        'radical-meaning': 'Radical → Meaning',
-        'meaning-radical': 'Meaning → Radical'
-    };
-    radicalsModeIndicator.textContent = modeNames[mode] || mode;
+    if (radicalsModes.length === 1) {
+        const modeNames = {
+            'audio-meaning': 'Audio → Meaning',
+            'audio-radical': 'Audio → Radical',
+            'radical-meaning': 'Radical → Meaning',
+            'meaning-radical': 'Meaning → Radical'
+        };
+        radicalsModeIndicator.textContent = modeNames[radicalsModes[0]];
+    } else {
+        radicalsModeIndicator.textContent = `Mixed Mode (${radicalsModes.length} types)`;
+    }
 
     loadNewRadicalCard();
 }
 
-// Exit radicals practice back to mode selection
+// Exit radicals practice back to selection
 function exitRadicalsPractice() {
-    radicalsMode = null;
-    radicalsPractice.classList.add('hidden');
-    radicalsModeSelect.classList.remove('hidden');
-    updateRadicalsStatsSummary();
+    switchPage('selection');
 }
 
 // Play radical audio
@@ -890,6 +937,9 @@ function loadNewRadicalCard() {
     radicalsAnswered = false;
     radicalsNextBtn.classList.remove('visible');
 
+    // Select a random mode from enabled modes
+    currentRadicalMode = radicalsModes[Math.floor(Math.random() * radicalsModes.length)];
+
     // Select a random radical
     currentRadical = RADICALS[Math.floor(Math.random() * RADICALS.length)];
 
@@ -904,16 +954,16 @@ function loadNewRadicalCard() {
     setupRadicalChoices(allChoices);
 
     // Auto-play audio for audio modes
-    if ((radicalsMode === 'audio-meaning' || radicalsMode === 'audio-radical') && userHasInteracted) {
+    if ((currentRadicalMode === 'audio-meaning' || currentRadicalMode === 'audio-radical') && userHasInteracted) {
         setTimeout(playRadicalAudio, 100);
     }
 }
 
 // Setup the radical prompt display
 function setupRadicalPrompt() {
-    const isAudioMode = radicalsMode === 'audio-meaning' || radicalsMode === 'audio-radical';
-    const showRadical = radicalsMode === 'radical-meaning';
-    const showMeaning = radicalsMode === 'meaning-radical';
+    const isAudioMode = currentRadicalMode === 'audio-meaning' || currentRadicalMode === 'audio-radical';
+    const showRadical = currentRadicalMode === 'radical-meaning';
+    const showMeaning = currentRadicalMode === 'meaning-radical';
 
     // Show/hide speaker button
     radicalsSpeaker.style.display = isAudioMode ? '' : 'none';
@@ -945,11 +995,11 @@ function setupRadicalPrompt() {
 function setupRadicalChoices(choices) {
     radicalsChoices.innerHTML = '';
 
-    const showRadicalChoices = radicalsMode === 'audio-radical' || radicalsMode === 'meaning-radical';
+    const showRadicalChoices = currentRadicalMode === 'audio-radical' || currentRadicalMode === 'meaning-radical';
 
     // Show pinyin hints on choices for meaning-radical and audio-radical modes
     // (audio-radical with pinyin is easier/beginner mode - user can toggle off for harder practice)
-    const showPinyinOnChoices = showPinyinHints && (radicalsMode === 'meaning-radical' || radicalsMode === 'audio-radical');
+    const showPinyinOnChoices = showPinyinHints && (currentRadicalMode === 'meaning-radical' || currentRadicalMode === 'audio-radical');
 
     choices.forEach(radical => {
         const btn = document.createElement('button');
@@ -1008,7 +1058,7 @@ function handleRadicalChoice(selectedId) {
         if (btnId === currentRadical.id) {
             btn.classList.add('correct');
             // Show the full answer
-            const showRadicalChoices = radicalsMode === 'audio-radical' || radicalsMode === 'meaning-radical';
+            const showRadicalChoices = currentRadicalMode === 'audio-radical' || currentRadicalMode === 'meaning-radical';
             if (showRadicalChoices) {
                 btn.innerHTML = `
                     <span class="choice-main">${currentRadical.radical}</span>
@@ -1026,7 +1076,7 @@ function handleRadicalChoice(selectedId) {
     });
 
     // Update prompt to show full info
-    if (radicalsMode === 'audio-meaning' || radicalsMode === 'audio-radical') {
+    if (currentRadicalMode === 'audio-meaning' || currentRadicalMode === 'audio-radical') {
         radicalsPrompt.textContent = currentRadical.radical;
         radicalsPrompt.className = 'radicals-prompt radical-mode revealed';
         radicalsPinyinHint.textContent = `${currentRadical.pinyin} - ${currentRadical.english}`;
@@ -1240,6 +1290,50 @@ function hideTonePicker() {
 }
 
 // Event Listeners
+
+// Landing page
+landingSignin.addEventListener('click', () => {
+    // TODO: Implement sign in
+    alert('Sign in coming soon! Continuing as guest...');
+    continueToSelection();
+});
+
+landingCreate.addEventListener('click', () => {
+    // TODO: Implement account creation
+    alert('Account creation coming soon! Continuing as guest...');
+    continueToSelection();
+});
+
+landingGuest.addEventListener('click', () => {
+    continueToSelection();
+});
+
+// Selection page
+selectPinyin.addEventListener('click', () => {
+    userHasInteracted = true;
+    switchPage('practice');
+    setPracticeMode('all');
+});
+
+selectRadicals.addEventListener('click', () => {
+    userHasInteracted = true;
+    showRadicalsModeModal();
+});
+
+selectionBack.addEventListener('click', () => {
+    switchPage('landing');
+});
+
+// Radicals mode modal
+radicalsModeClose.addEventListener('click', hideRadicalsModeModal);
+
+radicalsModeModal.addEventListener('click', (e) => {
+    if (e.target === radicalsModeModal) hideRadicalsModeModal();
+});
+
+startRadicalsBtn.addEventListener('click', startRadicalsPractice);
+
+// Pinyin practice
 speakerBtn.addEventListener('click', () => {
     userHasInteracted = true;
     playAudio();
@@ -1253,53 +1347,8 @@ toneButtons.forEach(btn => {
 
 nextBtn.addEventListener('click', loadNewCard);
 
-// Close mobile menu
-function closeMenu() {
-    menuOverlay.classList.remove('visible');
-}
-
-// Mobile menu button
-menuBtn.addEventListener('click', () => {
-    menuOverlay.classList.toggle('visible');
-});
-
-menuOverlay.addEventListener('click', (e) => {
-    if (e.target === menuOverlay) closeMenu();
-});
-
-// Mobile menu items
-menuPractice.addEventListener('click', () => {
-    closeMenu();
-    setPracticeMode('all');
-});
-
-menuMistakes.addEventListener('click', () => {
-    closeMenu();
-    if (getStrugglingKeys().length === 0) {
-        alert('No mistakes to review yet! Make some mistakes first.');
-        return;
-    }
-    setPracticeMode('mistakes');
-});
-
-menuExplore.addEventListener('click', () => {
-    closeMenu();
-    switchPage('explore');
-});
-
-menuRadicals.addEventListener('click', () => {
-    closeMenu();
-    switchPage('radicals');
-});
-
-menuSettings.addEventListener('click', () => {
-    closeMenu();
-    settingsModal.classList.add('visible');
-});
-
-// Desktop widget buttons
-practiceBtn.addEventListener('click', () => {
-    setPracticeMode('all');
+pinyinBackBtn.addEventListener('click', () => {
+    switchPage('selection');
 });
 
 mistakesBtn.addEventListener('click', () => {
@@ -1315,19 +1364,11 @@ exploreBtn.addEventListener('click', () => {
     hideTonePicker();
 });
 
-radicalsBtn.addEventListener('click', () => {
-    switchPage('radicals');
-});
-
-settingsBtnWidget.addEventListener('click', () => {
+settingsBtn.addEventListener('click', () => {
     settingsModal.classList.add('visible');
 });
 
 // Radicals page event listeners
-radicalsBackBtn.addEventListener('click', () => {
-    setPracticeMode('all');
-});
-
 radicalsPracticeBack.addEventListener('click', () => {
     exitRadicalsPractice();
 });
@@ -1339,25 +1380,9 @@ radicalsSpeaker.addEventListener('click', () => {
 
 radicalsNextBtn.addEventListener('click', loadNewRadicalCard);
 
-showPinyinToggle.addEventListener('change', (e) => {
-    showPinyinHints = e.target.checked;
-    saveRadicalsProgress();
-});
-
-// Mode card selection
-modeCards.forEach(card => {
-    card.addEventListener('click', () => {
-        const mode = card.dataset.mode;
-        if (mode) {
-            userHasInteracted = true;
-            startRadicalsPractice(mode);
-        }
-    });
-});
-
 // Back button (explore page)
 backBtn.addEventListener('click', () => {
-    setPracticeMode('all');
+    switchPage('practice');
 });
 
 // Mode exit
@@ -1390,10 +1415,10 @@ tonePickerOverlay.addEventListener('click', (e) => {
 
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
-    // Handle mobile menu
-    if (menuOverlay.classList.contains('visible')) {
+    // Handle radicals mode modal
+    if (radicalsModeModal.classList.contains('visible')) {
         if (e.key === 'Escape') {
-            closeMenu();
+            hideRadicalsModeModal();
         }
         return;
     }
@@ -1435,7 +1460,7 @@ document.addEventListener('keydown', (e) => {
     }
 
     // Radicals mode shortcuts
-    if (currentPage === 'radicals' && radicalsMode) {
+    if (currentPage === 'radicals' && currentRadicalMode) {
         if (e.key >= '1' && e.key <= '4' && !radicalsAnswered) {
             const buttons = radicalsChoices.querySelectorAll('.radical-choice-btn');
             const index = parseInt(e.key) - 1;
@@ -1457,4 +1482,4 @@ document.addEventListener('keydown', (e) => {
 // Initialize
 loadProgress();
 loadRadicalsProgress();
-setPracticeMode('all');
+checkFirstVisit();
