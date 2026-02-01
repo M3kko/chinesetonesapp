@@ -117,6 +117,7 @@ function showTonePicker(pinyin, cellElement) {
     activeChartCell = cellElement;
     cellElement.classList.add('active');
 
+    document.getElementById('tone-picker-title').textContent = toDisplayPinyin(pinyin);
     tonePickerButtons.innerHTML = '';
     const tones = SYLLABLE_TONES[pinyin];
 

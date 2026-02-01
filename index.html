@@ -4,7 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>polyglot.cafe</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/landing.css">
+    <link rel="stylesheet" href="css/selection.css">
+    <link rel="stylesheet" href="css/practice.css">
+    <link rel="stylesheet" href="css/explore.css">
+    <link rel="stylesheet" href="css/radicals.css">
+    <link rel="stylesheet" href="css/decks.css">
 </head>
 <body>
     <!-- Landing Page -->
@@ -49,6 +56,14 @@
                     <div class="option-content">
                         <div class="option-title">Radicals</div>
                         <div class="option-desc">Learn the 214 Kangxi radicals - the building blocks of Chinese characters</div>
+                    </div>
+                    <div class="option-arrow">→</div>
+                </button>
+
+                <button class="practice-option" id="select-decks">
+                    <div class="option-content">
+                        <div class="option-title">Custom Decks</div>
+                        <div class="option-desc">Create and practice your own flashcard decks</div>
                     </div>
                     <div class="option-arrow">→</div>
                 </button>
@@ -129,6 +144,56 @@
                 <button class="start-practice-btn" id="start-radicals-btn">
                     Start Practice
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Editor Modal -->
+    <div class="modal-overlay" id="card-editor-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="card-editor-title">Add Card</h3>
+                <button class="modal-close" id="card-editor-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="card-editor-field">
+                    <label>Front</label>
+                    <textarea id="card-front-input" placeholder="Question or term..."></textarea>
+                </div>
+                <div class="card-editor-field">
+                    <label>Back</label>
+                    <textarea id="card-back-input" placeholder="Answer or definition..."></textarea>
+                </div>
+                <button class="start-practice-btn" id="card-editor-save">Save Card</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deck Practice Mode Modal -->
+    <div class="modal-overlay" id="deck-practice-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Choose Practice Mode</h3>
+                <button class="modal-close" id="deck-practice-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="practice-mode-options">
+                    <button class="practice-mode-option" id="choose-flip-mode">
+                        <div class="mode-option-icon">↔</div>
+                        <div class="mode-option-text">
+                            <div class="mode-option-title">Flip Mode</div>
+                            <div class="mode-option-desc">See the front, reveal the back, self-assess</div>
+                        </div>
+                    </button>
+                    <button class="practice-mode-option" id="choose-mc-mode">
+                        <div class="mode-option-icon">☑</div>
+                        <div class="mode-option-text">
+                            <div class="mode-option-title">Multiple Choice</div>
+                            <div class="mode-option-desc">Pick the correct answer from 4 options</div>
+                        </div>
+                    </button>
+                </div>
+                <p class="modal-hint" id="mc-requirement-hint" style="display:none">Multiple choice requires at least 4 cards</p>
             </div>
         </div>
     </div>
@@ -331,7 +396,6 @@
                     </div>
 
                     <div class="radicals-choices" id="radicals-choices">
-                        <!-- 4 answer buttons will be populated here -->
                     </div>
 
                     <button class="next-btn" id="radicals-next">Next</button>
@@ -346,8 +410,141 @@
                 </div>
             </div>
         </div>
+
+        <!-- Decks List Page -->
+        <div class="page hidden" id="decks-page">
+            <div class="decks-container">
+                <div class="decks-header">
+                    <button class="back-btn" id="decks-back-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        Back
+                    </button>
+                    <h2>Custom Decks</h2>
+                    <button class="create-deck-btn" id="create-deck-btn">+ New Deck</button>
+                </div>
+                <div class="deck-list" id="deck-list"></div>
+                <div class="decks-empty-state" id="decks-empty">
+                    <p>No decks yet</p>
+                    <p>Create your first deck to start practicing</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deck Editor Page -->
+        <div class="page hidden" id="deck-editor-page">
+            <div class="deck-editor-container">
+                <div class="deck-editor-header">
+                    <button class="back-btn" id="editor-back-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        Back
+                    </button>
+                    <div class="deck-editor-actions">
+                        <button class="header-btn danger" id="delete-deck-btn" title="Delete Deck">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <input type="text" class="deck-name-input" id="deck-name-input" placeholder="Deck name...">
+                <div class="card-list" id="card-list"></div>
+                <button class="add-card-btn" id="add-card-btn">+ Add Card</button>
+                <button class="start-practice-btn" id="start-deck-practice-btn" disabled>Start Practice</button>
+            </div>
+        </div>
+
+        <!-- Custom Practice Page -->
+        <div class="page hidden" id="custom-practice-page">
+            <div class="practice-container">
+                <div class="practice-header">
+                    <button class="back-btn" id="custom-practice-back">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        Back
+                    </button>
+                    <div class="custom-practice-mode" id="custom-practice-mode">Flip Mode</div>
+                </div>
+
+                <div class="container">
+                    <!-- Flip mode stats -->
+                    <div class="stats" id="custom-flip-stats">
+                        <div class="stat">
+                            <div class="stat-value correct-val" id="custom-knew-count">0</div>
+                            <div class="stat-label">Knew</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="custom-remaining-count">0</div>
+                            <div class="stat-label">Remaining</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value incorrect" id="custom-missed-count">0</div>
+                            <div class="stat-label">Missed</div>
+                        </div>
+                    </div>
+
+                    <!-- MC mode stats -->
+                    <div class="stats" id="custom-mc-stats" style="display:none">
+                        <div class="stat">
+                            <div class="stat-value correct-val" id="custom-mc-correct">0</div>
+                            <div class="stat-label">Correct</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="custom-mc-streak">0</div>
+                            <div class="stat-label">Streak</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value incorrect" id="custom-mc-incorrect">0</div>
+                            <div class="stat-label">Incorrect</div>
+                        </div>
+                    </div>
+
+                    <!-- Flashcard -->
+                    <div class="flashcard custom-flashcard" id="custom-flashcard">
+                        <div class="custom-card-front" id="custom-card-front"></div>
+                        <div class="custom-card-back hidden" id="custom-card-back"></div>
+                    </div>
+
+                    <!-- Flip mode controls -->
+                    <div id="custom-flip-controls">
+                        <button class="next-btn visible" id="custom-show-answer-btn">Show Answer</button>
+                        <div class="custom-flip-buttons hidden" id="custom-flip-buttons">
+                            <button class="custom-flip-btn knew" id="custom-knew-btn">Knew It</button>
+                            <button class="custom-flip-btn didnt-know" id="custom-didnt-know-btn">Didn't Know It</button>
+                        </div>
+                    </div>
+
+                    <!-- MC mode choices -->
+                    <div class="radicals-choices" id="custom-mc-choices" style="display:none"></div>
+                    <button class="next-btn" id="custom-mc-next" style="display:none">Next</button>
+
+                    <!-- End summary -->
+                    <div class="custom-end-summary" id="custom-end-summary" style="display:none">
+                        <h3>Session Complete!</h3>
+                        <div class="custom-end-stats" id="custom-end-stats"></div>
+                        <button class="next-btn visible" id="custom-restart-btn">Practice Again</button>
+                        <button class="back-link" id="custom-end-back" style="margin-top:16px">Back to Deck</button>
+                    </div>
+
+                    <footer class="site-footer">
+                        Built with ❤️ by <a href="https://brody.gg" target="_blank" rel="noopener">brody</a>
+                    </footer>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/pinyin.js"></script>
+    <script src="js/radicals.js"></script>
+    <script src="js/explore.js"></script>
+    <script src="js/decks.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>

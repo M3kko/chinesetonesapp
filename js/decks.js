@@ -296,7 +296,6 @@ function loadFlipCard() {
 
 function showFlipAnswer() {
     customFlipRevealed = true;
-    const card = customPracticeCards[customPracticeIndex];
 
     document.getElementById('custom-card-back').classList.remove('hidden');
     document.getElementById('custom-show-answer-btn').style.display = 'none';
