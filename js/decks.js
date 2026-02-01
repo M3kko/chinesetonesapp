@@ -24,6 +24,71 @@ function loadDecks() {
     if (saved) {
         customDecks = JSON.parse(saved);
     }
+    // Ensure starter decks are always present
+    const starters = getStarterDecks();
+    for (const starter of starters) {
+        if (!customDecks.find(d => d.id === starter.id)) {
+            customDecks.push(starter);
+        }
+    }
+    saveDecks();
+}
+
+function getStarterDecks() {
+    return [
+        {
+            id: 'starter-radicals',
+            name: 'Radicals',
+            createdAt: new Date().toISOString(),
+            cards: [
+                { id: 'r1',  front: '一',  back: 'one (yī)' },
+                { id: 'r2',  front: '月',  back: 'moon / meat (yuè)' },
+                { id: 'r3',  front: '亻',  back: 'person (rén)' },
+                { id: 'r4',  front: '口',  back: 'mouth (kǒu)' },
+                { id: 'r5',  front: '十',  back: 'ten (shí)' },
+                { id: 'r6',  front: '足',  back: 'foot (zú)' },
+                { id: 'r7',  front: '八',  back: 'eight (bā)' },
+                { id: 'r8',  front: '钅',  back: 'gold / metal (jīn)' },
+                { id: 'r9',  front: '田',  back: 'field (tián)' },
+                { id: 'r10', front: '贝',  back: 'shell / valuable (bèi)' },
+                { id: 'r11', front: '女',  back: 'woman (nǚ)' },
+                { id: 'r12', front: '目',  back: 'eye (mù)' },
+                { id: 'r13', front: '木',  back: 'wood / tree (mù)' },
+                { id: 'r14', front: '火',  back: 'fire (huǒ)' },
+                { id: 'r15', front: '日',  back: 'sun / day (rì)' },
+                { id: 'r16', front: '走',  back: 'walk (zǒu)' },
+                { id: 'r17', front: '虫',  back: 'insect (chóng)' },
+                { id: 'r18', front: '犭',  back: 'dog (quǎn)' },
+                { id: 'r19', front: '饣',  back: 'eat / food (shí)' },
+                { id: 'r20', front: '忄',  back: 'heart (xīn)' },
+                { id: 'r21', front: '刀',  back: 'knife (dāo)' },
+                { id: 'r22', front: '氵',  back: 'water (shuǐ)' },
+                { id: 'r23', front: '肉',  back: 'meat (ròu)' },
+            ]
+        },
+        {
+            id: 'starter-phrases',
+            name: 'Words & Phrases',
+            createdAt: new Date().toISOString(),
+            cards: [
+                { id: 'p1',  front: '你好',             back: 'hello (nǐ hǎo)' },
+                { id: 'p2',  front: '你好吗？',          back: 'how are you? (nǐ hǎo ma?)' },
+                { id: 'p3',  front: '你叫什么名字？',      back: 'what is your name? (nǐ jiào shénme míngzi?)' },
+                { id: 'p4',  front: '我叫...',           back: 'my name is... (wǒ jiào...)' },
+                { id: 'p5',  front: '谢谢',             back: 'thank you (xièxie)' },
+                { id: 'p6',  front: '不客气',            back: "you're welcome (bú kèqi)" },
+                { id: 'p7',  front: '什么意思？',         back: 'what does it mean? (shénme yìsi?)' },
+                { id: 'p8',  front: '请再说一次',         back: 'please say it again (qǐng zài shuō yí cì)' },
+                { id: 'p9',  front: '老师',             back: 'teacher (lǎoshī)' },
+                { id: 'p10', front: '学生',             back: 'student (xuéshēng)' },
+                { id: 'p11', front: '跟我说',            back: 'say after me (gēn wǒ shuō)' },
+                { id: 'p12', front: '对吗？',            back: 'is it correct? (duì ma?)' },
+                { id: 'p13', front: '对',               back: 'correct (duì)' },
+                { id: 'p14', front: '不对',             back: 'not correct (búduì)' },
+                { id: 'p15', front: '你懂吗？',          back: 'do you understand? (nǐ dǒng ma?)' },
+            ]
+        }
+    ];
 }
 
 function saveDecks() {
