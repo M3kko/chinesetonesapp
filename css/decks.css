@@ -1,0 +1,504 @@
+/* ==================== CUSTOM DECKS ==================== */
+
+/* Decks List Page */
+.decks-container {
+    width: 100%;
+    max-width: 500px;
+}
+
+.decks-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    gap: 16px;
+}
+
+.decks-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fafafa;
+    flex: 1;
+}
+
+.create-deck-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid #27272a;
+    background: #18181b;
+    color: #fafafa;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.create-deck-btn:hover {
+    background: #27272a;
+    border-color: #3f3f46;
+}
+
+/* Deck List */
+.deck-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.deck-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: #18181b;
+    border: 1px solid #27272a;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.deck-item:hover {
+    background: #1f1f23;
+    border-color: #3f3f46;
+    transform: translateY(-1px);
+}
+
+.deck-item-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.deck-item-name {
+    font-size: 16px;
+    font-weight: 500;
+    color: #fafafa;
+    margin-bottom: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.deck-item-count {
+    font-size: 13px;
+    color: #71717a;
+}
+
+.deck-item-arrow {
+    font-size: 18px;
+    color: #52525b;
+    flex-shrink: 0;
+}
+
+/* Empty State */
+.decks-empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #52525b;
+}
+
+.decks-empty-state p:first-child {
+    font-size: 18px;
+    color: #71717a;
+    margin-bottom: 8px;
+}
+
+.decks-empty-state p:last-child {
+    font-size: 14px;
+}
+
+/* ==================== DECK EDITOR ==================== */
+
+.deck-editor-container {
+    width: 100%;
+    max-width: 500px;
+}
+
+.deck-editor-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.deck-editor-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.header-btn.danger {
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.header-btn.danger:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.deck-name-input {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid #27272a;
+    background: #18181b;
+    color: #fafafa;
+    font-size: 18px;
+    font-weight: 600;
+    outline: none;
+    margin-bottom: 20px;
+    transition: border-color 0.15s ease;
+}
+
+.deck-name-input:focus {
+    border-color: #3f3f46;
+}
+
+.deck-name-input::placeholder {
+    color: #52525b;
+}
+
+/* Card List */
+.card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.card-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #18181b;
+    border: 1px solid #27272a;
+    border-radius: 10px;
+    transition: all 0.15s ease;
+}
+
+.card-item:hover {
+    border-color: #3f3f46;
+}
+
+.card-item-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.card-item-front {
+    font-size: 14px;
+    color: #fafafa;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+}
+
+.card-item-separator {
+    color: #3f3f46;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.card-item-back {
+    font-size: 14px;
+    color: #71717a;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+}
+
+.card-item-actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.card-action-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: #52525b;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-size: 14px;
+}
+
+.card-action-btn:hover {
+    background: #27272a;
+    color: #fafafa;
+}
+
+.card-action-btn.delete:hover {
+    color: #ef4444;
+}
+
+.add-card-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px dashed #27272a;
+    background: transparent;
+    color: #71717a;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    margin-bottom: 16px;
+}
+
+.add-card-btn:hover {
+    border-color: #3f3f46;
+    color: #a1a1aa;
+    background: #18181b;
+}
+
+/* Card Editor Modal */
+.card-editor-field {
+    margin-bottom: 16px;
+}
+
+.card-editor-field label {
+    display: block;
+    font-size: 13px;
+    color: #a1a1aa;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.card-editor-field textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #27272a;
+    background: #0f0f11;
+    color: #fafafa;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    resize: vertical;
+    min-height: 80px;
+    transition: border-color 0.15s ease;
+}
+
+.card-editor-field textarea:focus {
+    border-color: #3f3f46;
+}
+
+.card-editor-field textarea::placeholder {
+    color: #52525b;
+}
+
+/* ==================== CUSTOM PRACTICE ==================== */
+
+.custom-practice-mode {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+    color: #71717a;
+}
+
+/* Custom Flashcard */
+.custom-flashcard {
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+
+.custom-card-front {
+    font-size: 28px;
+    font-weight: 600;
+    color: #fafafa;
+    text-align: center;
+    word-break: break-word;
+}
+
+.custom-card-back {
+    font-size: 22px;
+    color: #a1a1aa;
+    text-align: center;
+    word-break: break-word;
+    padding-top: 16px;
+    border-top: 1px solid #27272a;
+    width: 100%;
+}
+
+.custom-card-back.hidden {
+    display: none;
+}
+
+/* Flip Mode Buttons */
+.custom-flip-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.custom-flip-buttons.hidden {
+    display: none;
+}
+
+.custom-flip-btn {
+    padding: 16px;
+    border-radius: 12px;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+.custom-flip-btn.knew {
+    background: #22c55e;
+    color: #09090b;
+}
+
+.custom-flip-btn.didnt-know {
+    background: #ef4444;
+    color: #fafafa;
+}
+
+.custom-flip-btn:hover {
+    opacity: 0.9;
+}
+
+/* End Summary */
+.custom-end-summary {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.custom-end-summary.hidden {
+    display: none;
+}
+
+.custom-end-summary h3 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #fafafa;
+    margin-bottom: 20px;
+}
+
+.custom-end-stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 24px;
+}
+
+.custom-end-stat {
+    text-align: center;
+}
+
+.custom-end-stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.custom-end-stat-value.correct-val {
+    color: #22c55e;
+}
+
+.custom-end-stat-value.incorrect {
+    color: #ef4444;
+}
+
+.custom-end-stat-label {
+    font-size: 12px;
+    color: #71717a;
+    text-transform: uppercase;
+    margin-top: 4px;
+}
+
+/* Practice Mode Selection Modal */
+.practice-mode-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.practice-mode-option {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: #18181b;
+    border: 1px solid #27272a;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+    width: 100%;
+}
+
+.practice-mode-option:hover {
+    background: #1f1f23;
+    border-color: #3f3f46;
+}
+
+.practice-mode-option:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.practice-mode-option:disabled:hover {
+    background: #18181b;
+    border-color: #27272a;
+}
+
+.mode-option-icon {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #27272a;
+    border-radius: 10px;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.mode-option-text {
+    flex: 1;
+}
+
+.mode-option-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #fafafa;
+    margin-bottom: 2px;
+}
+
+.mode-option-desc {
+    font-size: 13px;
+    color: #71717a;
+}
+
+/* MC mode choices - reuse radicals-choices styles */
+
+/* Deck practice stats that are hidden by default */
+#custom-flip-stats.hidden,
+#custom-mc-stats.hidden,
+#custom-flip-controls.hidden,
+#custom-mc-choices.hidden,
+#custom-mc-next.hidden,
+#custom-flashcard.hidden {
+    display: none;
+}

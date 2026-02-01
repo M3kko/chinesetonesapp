@@ -1,0 +1,89 @@
+/* Landing Page */
+.landing-page {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 100;
+}
+
+.landing-page.hidden {
+    display: none;
+}
+
+.landing-container {
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+.landing-logo {
+    font-size: 72px;
+    margin-bottom: 16px;
+    filter: grayscale(1);
+}
+
+.landing-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #fafafa;
+    margin-bottom: 12px;
+}
+
+.landing-subtitle {
+    font-size: 16px;
+    color: #71717a;
+    margin-bottom: 40px;
+    line-height: 1.5;
+}
+
+.landing-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.landing-btn {
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.landing-btn.primary {
+    background: #fafafa;
+    color: #09090b;
+    border: none;
+}
+
+.landing-btn.primary:hover:not(.disabled) {
+    background: #e4e4e7;
+    transform: translateY(-1px);
+}
+
+.landing-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.landing-btn.secondary {
+    background: transparent;
+    color: #a1a1aa;
+    border: 1px solid #27272a;
+}
+
+.landing-btn.secondary:hover {
+    background: #18181b;
+    border-color: #3f3f46;
+    color: #fafafa;
+}
+
+.landing-note {
+    font-size: 13px;
+    color: #52525b;
+}
